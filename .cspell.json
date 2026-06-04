@@ -11,7 +11,11 @@
     "uv.lock",
     "go.sum",
     "*.min.js",
-    "*.min.css"
+    "*.min.css",
+    ".gitignore",
+    ".gitattributes",
+    "*.sum",
+    "go.mod"
   ],
   "words": [
     "ankitsingh",
@@ -98,7 +102,32 @@
     "typecheck",
     "typechecking",
     "pyproject",
-    "setuptools"
+    "setuptools",
+    "gofmt",
+    "golint",
+    "JSONLINT",
+    "jsonlint",
+    "venv",
+    "mypy",
+    "pyenv",
+    "ipynb",
+    "ipython",
+    "mkdocs",
+    "cython",
+    "streamlit",
+    "marimo",
+    "pypirc",
+    "pipenv",
+    "pdm",
+    "pypa",
+    "Pipfile",
+    "pixi",
+    "bm25",
+    "opensource",
+    "subagent",
+    "subagents",
+    "contrib",
+    "configs"
   ],
   "flagWords": []
 }
