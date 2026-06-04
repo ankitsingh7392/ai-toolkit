@@ -1,0 +1,44 @@
+---
+# MegaLinter configuration
+# Docs: https://megalinter.io/latest/configuration/
+
+APPLY_FIXES: none
+DISABLE_ERRORS: false
+
+# Only scan files changed in the PR (faster)
+VALIDATE_ALL_CODEBASE: false
+
+# Linters to enable (covers Python, Shell, Go, Java, YAML, JSON, Markdown)
+ENABLE_LINTERS:
+  - PYTHON_RUFF
+  - PYTHON_BANDIT
+  - BASH_SHELLCHECK
+  - GO_GOLANGCI_LINT
+  - JAVA_CHECKSTYLE
+  - YAML_YAMLLINT
+  - JSON_JSONLINT
+  - MARKDOWN_MARKDOWNLINT
+  - REPOSITORY_GITLEAKS
+  - REPOSITORY_SECRETLINT
+  - REPOSITORY_TRIVY
+  - SPELL_CSPELL
+
+# Reporters
+FILEIO_REPORTER: false
+SARIF_REPORTER: true
+GITHUB_STATUS_REPORTER: true
+GITHUB_COMMENT_REPORTER: true
+SHOW_ELAPSED_TIME: true
+
+# Python
+PYTHON_RUFF_CONFIG_FILE: pyproject.toml
+PYTHON_RUFF_ARGUMENTS: --fix
+
+# Java - Google style
+JAVA_CHECKSTYLE_CONFIG_FILE: google_checks.xml
+
+# Markdown
+MARKDOWN_MARKDOWNLINT_DISABLE_ERRORS: true
+
+# Secret scanning
+REPOSITORY_GITLEAKS_CONFIG_FILE: .gitleaks.toml

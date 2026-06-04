@@ -1,0 +1,17 @@
+[extend]
+# Use the default gitleaks ruleset as base
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+  ".gitleaks.toml",
+  "SECURITY.md",
+]
+regexTarget = "match"
+regexes = [
+  # Allow example/placeholder values in docs
+  '''(?i)(example|placeholder|your[_-]?key|insert[_-]?here|<[a-z_]+>)''',
+  # Allow test fixture patterns
+  '''(?i)test[_-]?(key|secret|token|password)''',
+]

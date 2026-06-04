@@ -1,0 +1,11 @@
+# Global owners — required reviewers for all changes
+* @ankitsingh7392
+
+# CI/CD and tooling
+.github/ @ankitsingh7392
+.pre-commit-config.yaml @ankitsingh7392
+pyproject.toml @ankitsingh7392
+
+# Security-sensitive files
+SECURITY.md @ankitsingh7392
+.gitleaks.toml @ankitsingh7392

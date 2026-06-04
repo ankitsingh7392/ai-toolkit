@@ -1,0 +1,55 @@
+[project]
+name = "ai-toolkit"
+version = "0.1.0"
+description = "Enterprise AI Toolkit - Production-grade AI solutions monorepo"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Ankit Singh", email = "ankitsingh7392@gmail.com" }]
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pre-commit>=3.7.0",
+  "ruff>=0.4.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+exclude = [
+  ".git",
+  ".venv",
+  "__pycache__",
+  "dist",
+  "build",
+  "*.egg-info",
+]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "N",   # pep8-naming
+  "UP",  # pyupgrade
+  "B",   # flake8-bugbear
+  "S",   # flake8-bandit (security)
+  "A",   # flake8-builtins
+  "C4",  # flake8-comprehensions
+  "SIM", # flake8-simplify
+]
+ignore = [
+  "S101", # allow assert in tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S", "N"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ai_toolkit"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
