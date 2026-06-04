@@ -40,5 +40,8 @@ JAVA_CHECKSTYLE_CONFIG_FILE: google_checks.xml
 # Markdown
 MARKDOWN_MARKDOWNLINT_DISABLE_ERRORS: true
 
+# Spell checking
+SPELL_CSPELL_CONFIG_FILE: .cspell.json
+
 # Secret scanning
 REPOSITORY_GITLEAKS_CONFIG_FILE: .gitleaks.toml
