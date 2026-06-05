@@ -1,0 +1,43 @@
+# Requires an Ingress controller — nginx-ingress is the most common:
+#   helm upgrade --install ingress-nginx ingress-nginx \
+#     --repo https://kubernetes.github.io/ingress-nginx \
+#     --namespace ingress-nginx --create-namespace
+#
+# Replace failsage.example.com with your actual hostname.
+# For TLS, add a cert-manager ClusterIssuer or manually create a TLS secret.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: failsage
+  namespace: failsage
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    # Uncomment to enable TLS via cert-manager:
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  # tls:
+  #   - hosts:
+  #       - failsage.example.com
+  #     secretName: failsage-tls
+  rules:
+    - host: failsage.example.com
+      http:
+        paths:
+          # Dashboard
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+          # Celery Flower (restrict in production — add auth annotation)
+          - path: /flower
+            pathType: Prefix
+            backend:
+              service:
+                name: flower
+                port:
+                  number: 5555

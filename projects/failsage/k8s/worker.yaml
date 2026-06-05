@@ -1,0 +1,108 @@
+# Celery worker — same image as backend, different entrypoint.
+# Scale replicas up to handle larger webhook volumes.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: failsage
+  labels:
+    app: worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: <YOUR_REGISTRY>/failsage-backend:IMAGE_TAG
+          imagePullPolicy: Always
+          command:
+            - celery
+            - -A
+            - app.core.celery_app
+            - worker
+            - --loglevel=info
+            - --concurrency=4
+            - -Q
+            - default
+          envFrom:
+            - configMapRef:
+                name: failsage-config
+            - secretRef:
+                name: failsage-secrets
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - celery -A app.core.celery_app inspect ping -d celery@$HOSTNAME --timeout 5
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+---
+# Optional: Flower UI for monitoring Celery tasks
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flower
+  namespace: failsage
+  labels:
+    app: flower
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flower
+  template:
+    metadata:
+      labels:
+        app: flower
+    spec:
+      containers:
+        - name: flower
+          image: <YOUR_REGISTRY>/failsage-backend:IMAGE_TAG
+          imagePullPolicy: Always
+          command:
+            - celery
+            - -A
+            - app.core.celery_app
+            - flower
+            - --port=5555
+          ports:
+            - containerPort: 5555
+          envFrom:
+            - configMapRef:
+                name: failsage-config
+            - secretRef:
+                name: failsage-secrets
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flower
+  namespace: failsage
+spec:
+  selector:
+    app: flower
+  ports:
+    - port: 5555
+      targetPort: 5555

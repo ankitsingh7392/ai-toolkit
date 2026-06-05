@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: failsage-config
+  namespace: failsage
+data:
+  # Application
+  DEBUG: "false"
+  # AI
+  AI_MODEL: "claude-sonnet-4-6"
+  AI_MOCK_MODE: "false"
+  # Database — points at the in-cluster postgres Service
+  DATABASE_URL: "postgresql+asyncpg://failsage:failsage@postgres:5432/failsage"
+  DATABASE_URL_SYNC: "postgresql+psycopg2://failsage:failsage@postgres:5432/failsage"
+  # Celery — points at the in-cluster redis Service
+  CELERY_BROKER_URL: "redis://redis:6379/0"
+  CELERY_RESULT_BACKEND: "redis://redis:6379/0"
+  # Tuning
+  CLUSTER_SIMILARITY_THRESHOLD: "0.72"
+  FLAKY_LOOKBACK_RUNS: "10"
+  FLAKY_FAIL_RATE_THRESHOLD: "0.3"
+  # Jira (non-sensitive defaults)
+  JIRA_PROJECT: "QE"

@@ -1,0 +1,82 @@
+# Replace IMAGE_TAG with your actual image tag (e.g. git SHA or semver).
+# Build and push:
+#   docker build -t <YOUR_REGISTRY>/failsage-backend:IMAGE_TAG ./backend
+#   docker push <YOUR_REGISTRY>/failsage-backend:IMAGE_TAG
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: failsage
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        # Run Alembic migrations before the first replica becomes ready.
+        # This is safe because the init container only runs in the first pod;
+        # Alembic uses advisory locks so concurrent runs are safe.
+        - name: migrate
+          image: <YOUR_REGISTRY>/failsage-backend:IMAGE_TAG
+          command: [alembic, upgrade, head]
+          envFrom:
+            - configMapRef:
+                name: failsage-config
+            - secretRef:
+                name: failsage-secrets
+      containers:
+        - name: backend
+          image: <YOUR_REGISTRY>/failsage-backend:IMAGE_TAG
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - configMapRef:
+                name: failsage-config
+            - secretRef:
+                name: failsage-secrets
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: failsage
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8000
+      targetPort: 8000

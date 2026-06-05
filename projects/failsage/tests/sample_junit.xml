@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+
+  <testsuite name="auth_tests" tests="5" failures="2" errors="0" skipped="1" time="3.42">
+
+    <testcase classname="tests.auth.test_login" name="test_valid_login" time="0.34"/>
+
+    <testcase classname="tests.auth.test_login" name="test_invalid_password" time="0.12">
+      <failure message="AssertionError: Expected status 401, got 200" type="AssertionError">
+        Traceback (most recent call last):
+          File "tests/auth/test_login.py", line 45, in test_invalid_password
+            assert response.status_code == 401, f"Expected 401, got {response.status_code}"
+        AssertionError: Expected status 401, got 200
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.auth.test_session" name="test_session_timeout" time="2.10">
+      <failure message="TimeoutError: Session did not expire after 300s" type="TimeoutError">
+        Traceback (most recent call last):
+          File "tests/auth/test_session.py", line 88, in test_session_timeout
+            wait_for_session_expiry(token, timeout=300)
+          File "tests/helpers.py", line 22, in wait_for_session_expiry
+            raise TimeoutError("Session did not expire within the expected window")
+        TimeoutError: Session did not expire after 300s
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.auth.test_oauth" name="test_oauth_callback" time="0.88"/>
+
+    <testcase classname="tests.auth.test_mfa" name="test_mfa_disabled_flow" time="0.00">
+      <skipped message="MFA feature flag disabled in staging"/>
+    </testcase>
+
+  </testsuite>
+
+  <testsuite name="api_tests" tests="6" failures="3" errors="1" skipped="0" time="12.88">
+
+    <testcase classname="tests.api.test_users" name="test_get_user_by_id" time="0.45"/>
+
+    <testcase classname="tests.api.test_users" name="test_create_user" time="0.67">
+      <failure message="AssertionError: Expected 201, got 500" type="AssertionError">
+        Traceback (most recent call last):
+          File "tests/api/test_users.py", line 112, in test_create_user
+            assert resp.status_code == 201
+          File "app/services/user_service.py", line 56, in create
+            raise NullPointerException("email field cannot be None")
+        AssertionError: Expected 201, got 500
+        Internal Server Error: NullPointerException at UserService.create()
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.api.test_users" name="test_update_user_profile" time="0.88">
+      <failure message="AssertionError: Expected 200, got 500" type="AssertionError">
+        Traceback (most recent call last):
+          File "tests/api/test_users.py", line 178, in test_update_user_profile
+            assert resp.status_code == 200
+        AssertionError: Expected 200, got 500
+        Internal Server Error: NullPointerException at UserService.update()
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.api.test_orders" name="test_place_order" time="4.21">
+      <failure message="ConnectionError: Failed to connect to payment service at payments.internal:8081" type="ConnectionError">
+        Traceback (most recent call last):
+          File "tests/api/test_orders.py", line 66, in test_place_order
+            payment = payment_client.charge(cart)
+          File "app/clients/payment.py", line 34, in charge
+            resp = requests.post("http://payments.internal:8081/charge", json=data, timeout=5)
+        requests.exceptions.ConnectionError: Failed to connect to payments.internal:8081
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.api.test_inventory" name="test_inventory_update" time="1.44"/>
+
+    <testcase classname="tests.api.test_db" name="test_bulk_insert_performance" time="5.23">
+      <error message="OperationalError: could not connect to server: Connection refused at 127.0.0.1:5432" type="OperationalError">
+        sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server:
+          Connection refused
+          Is the server running on host "127.0.0.1" and accepting TCP/IP connections on port 5432?
+      </error>
+    </testcase>
+
+  </testsuite>
+
+  <testsuite name="ui_tests" tests="4" failures="2" errors="0" skipped="0" time="45.67">
+
+    <testcase classname="tests.ui.test_dashboard" name="test_dashboard_loads" time="3.12"/>
+
+    <testcase classname="tests.ui.test_dashboard" name="test_filter_by_date" time="8.55">
+      <failure message="NoSuchElementException: Unable to locate element: #date-picker" type="org.openqa.selenium.NoSuchElementException">
+        org.openqa.selenium.NoSuchElementException: no such element: Unable to locate element:
+          {"method":"css selector","selector":"#date-picker"}
+          (Session info: chrome=125.0.6422.113)
+          at org.openqa.selenium.remote.RemoteWebDriver.findElement
+          at tests.ui.DashboardTest.test_filter_by_date(DashboardTest.java:134)
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.ui.test_reports" name="test_export_pdf" time="21.00">
+      <failure message="TimeoutException: Timed out after 20000ms waiting for element to be clickable" type="org.openqa.selenium.TimeoutException">
+        org.openqa.selenium.TimeoutException: Expected condition failed: waiting for element to be clickable:
+          By.id: export-pdf-button (tried for 20 second(s) with 500 milliseconds interval)
+          at tests.ui.ReportTest.test_export_pdf(ReportTest.java:67)
+      </failure>
+    </testcase>
+
+    <testcase classname="tests.ui.test_login_page" name="test_login_redirect" time="2.45"/>
+
+  </testsuite>
+
+</testsuites>
