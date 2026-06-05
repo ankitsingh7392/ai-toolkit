@@ -4,6 +4,25 @@
 
 FailSage is an AI-powered QE bug triage and root cause intelligence platform that integrates directly into Jenkins CI/CD pipelines. It receives JUnit XML test results via webhook, analyzes failures asynchronously using Claude, clusters duplicates, detects flaky tests, and surfaces regression insights — all without blocking your pipeline.
 
+<table>
+<tr>
+<td width="50%">
+<img src="docs/assets/dashboard-dark.png" alt="FailSage dashboard — dark mode" />
+<p align="center"><em>Dashboard — dark mode</em></p>
+</td>
+<td width="50%">
+<img src="docs/assets/dashboard-light.png" alt="FailSage dashboard — light mode" />
+<p align="center"><em>Dashboard — light mode</em></p>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<img src="docs/assets/run-detail-dark.png" alt="FailSage run detail with AI analysis" />
+<p align="center"><em>Run detail — AI build assessment, severity-tagged failures, and root cause analysis</em></p>
+</td>
+</tr>
+</table>
+
 ---
 
 ## Table of Contents

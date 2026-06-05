@@ -40,6 +40,17 @@
 
 FailSage integrates into Jenkins CI/CD pipelines, receives JUnit XML test results via webhook, analyzes failures asynchronously with Claude, clusters duplicates, detects flaky tests, and surfaces regression insights — all without blocking your pipeline.
 
+<table>
+<tr>
+<td width="50%">
+<img src="projects/failsage/docs/assets/dashboard-dark.png" alt="FailSage dashboard — dark mode" />
+</td>
+<td width="50%">
+<img src="projects/failsage/docs/assets/run-detail-dark.png" alt="FailSage run detail with AI analysis" />
+</td>
+</tr>
+</table>
+
 **Full docs:** [`projects/failsage/README.md`](projects/failsage/README.md)
 
 #### Stack
