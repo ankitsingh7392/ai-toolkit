@@ -45,7 +45,10 @@ async def ingest_test_results(
     ci_meta = payload.ci.model_dump()
     process_jenkins_run.delay(run_id, payload.junit_xml, ci_meta)
 
-    logger.info("Queued analysis run_id=%s for job=%s build=%s", run_id, payload.ci.job_name, payload.ci.build_id)
+    logger.info(
+        "Queued analysis run_id=%s for job=%s build=%s",
+        run_id, payload.ci.job_name, payload.ci.build_id,
+    )
 
     return RunCreatedResponse(
         run_id=run_id,

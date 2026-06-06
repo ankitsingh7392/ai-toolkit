@@ -25,11 +25,16 @@ settings = get_settings()
     default_retry_delay=15,
     queue="analysis",
 )
-def process_jenkins_run(self, run_id: str, junit_xml: str, ci_meta: dict[str, Any]) -> dict[str, Any]:
+def process_jenkins_run(
+    self, run_id: str, junit_xml: str, ci_meta: dict[str, Any]
+) -> dict[str, Any]:
     logger.info("Starting analysis for run_id=%s", run_id)
 
     with get_sync_session() as session:
-        run = session.execute(select(TestRun).where(TestRun.run_id == run_id)).scalar_one_or_none()
+        run = (
+            session.execute(select(TestRun).where(TestRun.run_id == run_id))
+            .scalar_one_or_none()
+        )
         if not run:
             logger.error("TestRun %s not found", run_id)
             return {"error": "run not found"}
@@ -105,7 +110,10 @@ def process_jenkins_run(self, run_id: str, junit_xml: str, ci_meta: dict[str, An
                 cluster_map[tid] = cluster.cluster_id
 
         with get_sync_session() as session:
-            run_id_uuid = session.execute(select(TestRun.id).where(TestRun.run_id == run_id)).scalar()
+            run_id_uuid = (
+                session.execute(select(TestRun.id).where(TestRun.run_id == run_id))
+                .scalar()
+            )
             all_tc = session.execute(
                 select(TestCase).where(TestCase.run_id == run_id_uuid)
             ).scalars().all()
@@ -118,7 +126,10 @@ def process_jenkins_run(self, run_id: str, junit_xml: str, ci_meta: dict[str, An
         cluster_analysis_cache: dict[str, dict[str, Any]] = {}
 
         with get_sync_session() as session:
-            run_id_uuid = session.execute(select(TestRun.id).where(TestRun.run_id == run_id)).scalar()
+            run_id_uuid = (
+                session.execute(select(TestRun.id).where(TestRun.run_id == run_id))
+                .scalar()
+            )
             failed_tcs = session.execute(
                 select(TestCase).where(
                     TestCase.run_id == run_id_uuid,
@@ -213,7 +224,10 @@ def process_jenkins_run(self, run_id: str, junit_xml: str, ci_meta: dict[str, An
     except Exception as exc:
         logger.exception("Analysis failed for run_id=%s: %s", run_id, exc)
         with get_sync_session() as session:
-            run = session.execute(select(TestRun).where(TestRun.run_id == run_id)).scalar_one_or_none()
+            run = (
+                session.execute(select(TestRun).where(TestRun.run_id == run_id))
+                .scalar_one_or_none()
+            )
             if run:
                 run.status = "failed"
                 run.error_detail = str(exc)

@@ -11,12 +11,14 @@ from app.models.schemas.analysis import TestCaseResponse
 router = APIRouter(prefix="/test", tags=["Test Analysis"])
 
 
-@router.get("/{test_id}/analysis", response_model=TestCaseResponse, summary="Full AI analysis for a test case")
+@router.get("/{test_id}/analysis", response_model=TestCaseResponse, summary="Full AI analysis for a test case")  # noqa: E501
 async def get_test_analysis(
     test_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
 ) -> TestCaseResponse:
-    row = (await db.execute(select(TestCase).where(TestCase.id == test_id))).scalar_one_or_none()
+    row = (
+        await db.execute(select(TestCase).where(TestCase.id == test_id))
+    ).scalar_one_or_none()
     if not row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Test case not found")
     return TestCaseResponse.model_validate(row)

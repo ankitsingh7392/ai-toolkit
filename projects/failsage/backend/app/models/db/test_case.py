@@ -16,7 +16,10 @@ class TestCase(Base, TimestampMixin):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=new_uuid)
     run_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("test_runs.id", ondelete="CASCADE"), nullable=False, index=True
+        UUID(as_uuid=True),
+        ForeignKey("test_runs.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
     )
 
     # JUnit XML fields

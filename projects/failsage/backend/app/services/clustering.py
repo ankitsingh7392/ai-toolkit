@@ -32,8 +32,11 @@ class FailureCluster:
 
 def _fingerprint(rec: FailureRecord) -> str:
     """Stable hash for identical failures (exact dedup before TF-IDF clustering)."""
-    key = f"{rec.failure_type}::{_first_exception_line(rec.stack_trace)}::{rec.classname.rsplit('.', 1)[0]}"
-    return hashlib.md5(key.encode()).hexdigest()[:12]  # noqa: S324
+    key = (
+        f"{rec.failure_type}::{_first_exception_line(rec.stack_trace)}"
+        f"::{rec.classname.rsplit('.', 1)[0]}"
+    )
+    return hashlib.md5(key.encode(), usedforsecurity=False).hexdigest()[:12]
 
 
 def _first_exception_line(stack_trace: Optional[str]) -> str:

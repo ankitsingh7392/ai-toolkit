@@ -31,7 +31,11 @@ def send_slack_notification(
                 "text": f"{failed} test(s) failed. {risk_text}",
                 "fields": [
                     {"title": "Run ID", "value": run_id, "short": True},
-                    {"title": "Action", "value": "INVESTIGATE" if build_at_risk else "MONITOR", "short": True},
+                    {
+                        "title": "Action",
+                        "value": "INVESTIGATE" if build_at_risk else "MONITOR",
+                        "short": True,
+                    },
                 ],
                 "footer": "FailSage",
             }

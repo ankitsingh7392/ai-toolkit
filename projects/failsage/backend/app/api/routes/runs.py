@@ -14,9 +14,15 @@ router = APIRouter(prefix="/runs", tags=["Runs"])
 
 @router.get("/meta", tags=["Runs"], summary="Available job names and branches for filter dropdowns")
 async def get_meta(db: AsyncSession = Depends(get_db)) -> dict:
-    jobs = (await db.execute(select(distinct(TestRun.job_name)).order_by(TestRun.job_name))).scalars().all()
-    branches = (await db.execute(select(distinct(TestRun.branch)).order_by(TestRun.branch))).scalars().all()
-    envs = (await db.execute(select(distinct(TestRun.environment)).order_by(TestRun.environment))).scalars().all()
+    jobs = (await db.execute(
+        select(distinct(TestRun.job_name)).order_by(TestRun.job_name)
+    )).scalars().all()
+    branches = (await db.execute(
+        select(distinct(TestRun.branch)).order_by(TestRun.branch)
+    )).scalars().all()
+    envs = (await db.execute(
+        select(distinct(TestRun.environment)).order_by(TestRun.environment)
+    )).scalars().all()
     return {"jobs": list(jobs), "branches": list(branches), "environments": list(envs)}
 
 
@@ -29,8 +35,8 @@ async def list_runs(
     environment: Optional[str] = Query(None),
     run_status: Optional[str] = Query(None, alias="status"),
     build_at_risk: Optional[bool] = Query(None),
-    date_from: Optional[datetime] = Query(None, description="ISO 8601, e.g. 2026-06-01T00:00:00"),
-    date_to: Optional[datetime] = Query(None, description="ISO 8601, e.g. 2026-06-05T23:59:59"),
+    date_from: Optional[datetime] = Query(None, description="ISO 8601 e.g. 2026-06-01T00:00:00"),
+    date_to: Optional[datetime] = Query(None, description="ISO 8601 e.g. 2026-06-05T23:59:59"),
     db: AsyncSession = Depends(get_db),
 ) -> list[RunResponse]:
     q = select(TestRun).order_by(desc(TestRun.created_at)).limit(limit).offset(offset)
@@ -54,7 +60,11 @@ async def list_runs(
 
 @router.get("/{run_id}", response_model=RunResponse, summary="Get run status and build insight")
 async def get_run(run_id: str, db: AsyncSession = Depends(get_db)) -> RunResponse:
-    row = (await db.execute(select(TestRun).where(TestRun.run_id == run_id))).scalar_one_or_none()
+    row = (
+        await db.execute(select(TestRun).where(TestRun.run_id == run_id))
+    ).scalar_one_or_none()
     if not row:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Run {run_id!r} not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Run {run_id!r} not found"
+        )
     return RunResponse.model_validate(row)

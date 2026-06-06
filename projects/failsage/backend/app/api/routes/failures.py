@@ -20,7 +20,9 @@ async def get_failures(
     flaky_only: bool = Query(False),
     db: AsyncSession = Depends(get_db),
 ) -> list[TestCaseResponse]:
-    run_row = (await db.execute(select(TestRun.id).where(TestRun.run_id == run_id))).scalar_one_or_none()
+    run_row = (
+        await db.execute(select(TestRun.id).where(TestRun.run_id == run_id))
+    ).scalar_one_or_none()
     if not run_row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Run not found")
 

@@ -478,7 +478,7 @@ Poll for status and build-level insight.
 
 ### `GET /failures/{run_id}`
 
-All failures with AI analysis, severity, and cluster info.  
+All failures with AI analysis, severity, and cluster info.
 Optional filters: `?severity=P0`, `?category=API`, `?flaky_only=true`
 
 ### `GET /flaky-tests`
@@ -527,7 +527,7 @@ All config is via environment variables (`.env` for Docker, ConfigMap + Secret f
 
 ## AI Analysis Design
 
-Claude is called **once per failure cluster**, not per test.  
+Claude is called **once per failure cluster**, not per test.
 100 tests with the same `NullPointerException` = **1 API call**.
 
 Each response is **strict JSON only** — FailSage rejects any response that isn't valid JSON, and the prompt explicitly forbids inventing context not present in the failure data.

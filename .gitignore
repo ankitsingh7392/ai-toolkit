@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# failsage project
+projects/failsage/.env
+projects/failsage/frontend/node_modules/
+projects/failsage/backend/.venv/

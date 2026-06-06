@@ -11,13 +11,15 @@ logger = logging.getLogger(__name__)
 settings = get_settings()
 
 FAILURE_ANALYSIS_PROMPT = """You are a QE intelligence engine embedded in a CI/CD pipeline.
-Analyze the test failure below and return ONLY valid JSON — no prose, no markdown, no text outside JSON.
+Analyze the test failure below and return ONLY valid JSON —
+no prose, no markdown, no text outside JSON.
 
 STRICT RULES:
 1. Base your analysis ONLY on the data provided — never invent context not present
 2. Separate observed_facts (directly in the data) from inferred_reasoning (your deduction)
 3. If data is insufficient to determine something, use null and lower confidence_score
-4. failure_category must be exactly one of: UI, API, Database, Performance, Infrastructure, TestIssue
+4. failure_category must be exactly one of:
+   UI, API, Database, Performance, Infrastructure, TestIssue
 
 TEST FAILURE:
 {failure_data}
@@ -47,7 +49,8 @@ Return this EXACT JSON schema:
   "related_components": ["<system components from classname/error context>"]
 }}"""
 
-BUILD_REGRESSION_PROMPT = """You are a CI/CD regression analyst. Assess this Jenkins build's health and regression risk.
+BUILD_REGRESSION_PROMPT = """You are a CI/CD regression analyst.
+Assess this Jenkins build's health and regression risk.
 Return ONLY valid JSON.
 
 CI METADATA:
@@ -76,8 +79,14 @@ Return this EXACT JSON schema:
 MOCK_ANALYSIS: dict[str, Any] = {
     "failure_category": "API",
     "root_cause": {
-        "observed_facts": ["HTTP 500 returned from /api/users endpoint", "NullPointerException in UserService.getById"],
-        "inferred_reasoning": "The service is not handling a null user lookup result before accessing its properties.",
+        "observed_facts": [
+            "HTTP 500 returned from /api/users endpoint",
+            "NullPointerException in UserService.getById",
+        ],
+        "inferred_reasoning": (
+            "The service is not handling a null user lookup result"
+            " before accessing its properties."
+        ),
         "summary": "Unhandled null dereference in UserService.getById when user does not exist",
     },
     "severity": "P1",
@@ -99,9 +108,13 @@ MOCK_ANALYSIS: dict[str, Any] = {
 MOCK_BUILD_INSIGHT: dict[str, Any] = {
     "build_at_risk": True,
     "risk_level": "HIGH",
-    "risk_rationale": "3 of 5 failures share the same API error pattern suggesting a recent regression",
+    "risk_rationale": (
+        "3 of 5 failures share the same API error pattern suggesting a recent regression"
+    ),
     "likely_regression_commit": None,
-    "regression_reasoning": "Failures cluster around UserService; no commit SHA available in provided metadata",
+    "regression_reasoning": (
+        "Failures cluster around UserService; no commit SHA available in provided metadata"
+    ),
     "affected_components": ["UserService", "AuthController"],
     "recommended_action": "INVESTIGATE",
     "action_rationale": "Pattern suggests a single root cause; investigate before merging",
@@ -169,7 +182,11 @@ def analyze_failure(
         return _call_claude(prompt)
     except Exception as exc:
         logger.exception("AI failure analysis failed: %s", exc)
-        return {**MOCK_ANALYSIS, "confidence_score": 0, "low_confidence_reasons": [f"AI unavailable: {exc}"]}
+        return {
+            **MOCK_ANALYSIS,
+            "confidence_score": 0,
+            "low_confidence_reasons": [f"AI unavailable: {exc}"],
+        }
 
 
 def analyze_build(
@@ -195,4 +212,8 @@ def analyze_build(
         return _call_claude(prompt)
     except Exception as exc:
         logger.exception("AI build analysis failed: %s", exc)
-        return {**MOCK_BUILD_INSIGHT, "confidence_score": 0, "risk_rationale": f"AI unavailable: {exc}"}
+        return {
+            **MOCK_BUILD_INSIGHT,
+            "confidence_score": 0,
+            "risk_rationale": f"AI unavailable: {exc}",
+        }
